@@ -1,53 +1,98 @@
 {% extends "base.html" %}
+
 {% block content %}
+<div class="col-sm-8 col-sm-offset-2">
+<h1> {{ title }}</h1>
 
+<form id="form1" method="GET" action="">
+    <input type="text" name="q" placeholder="Search Posts" value="{{request.GET.q}}">
+    <input type="submit" value="search">
 
-<div class='col-sm-6 col-sm-offset-3'>
-    <h1>{{ title }}</h1>
-<form method='GET' action=''>
-<input type='text' name='q' placeholder='Search posts' value='{{ request.GET.q }}'/>
-<input type='submit' value='Search' />
 </form>
-{% for obj in object_list %}
+
+{% for obj in queryset %}
+{#<div class='col-sm-6'>#}
+{##}
+{#            <a href='{% url "post:detail" id=obj.id%}'>#}
+{#            <a href="/posts/{{ obj.id }}"></a>#}
+{#</div>#}
 <div class="row">
-  <div class="col-sm-12">
+
+  <div class="col-sm-12 ">
     <div class="thumbnail">
-        {% if obj.image %}
-         <img src='{{ obj.image.url }}' class='img-responsive' />
+        {% if obj.image  %}
+         <img src="{{ obj.image.url }}" class="img-responsive">
         {% endif %}
+{#      <img src="..." alt="...">#}
       <div class="caption">
-        {% if obj.draft %}<h3>Staff only: Draft</h3>{% endif %} {% if obj.publish > today %}<h3>Staff Only: Future Post</h3>{% endif %}
-        <h3><a href='{{ obj.get_absolute_url }}'>{{ obj.title }}</a> <small>{{ obj.publish }}</small></h3>
-        {% if obj.user.get_full_name %}<p>Author: {{ obj.user.get_full_name }}</p>{% endif %}
-        <p>{{ obj.content|linebreaks|truncatechars:120 }}</p>
-        <p><a href="{{ obj.get_absolute_url }}" class="btn btn-primary" role="button">View</a></p>
+        <h3>
+                {% if obj.draft %}Staff only: Draft </br>
+                    {% if obj.publish > today %}
+                    Future Post</br>
+                    {% endif %}
+                {% endif %}
+
+            <a href='{{ obj.get_absolute_url }}'>
+                 {{ obj.title }} </br>
+                </a>
+            <small> {{ obj.publish|timesince }} </small>
+        </h3>
+        <p>{{ obj.content|linebreaks|truncatechars:100}}</p>
+        <p><a href="{{ obj.get_absolute_url }}" class="btn btn-primary" role="button">View</a>
+
+            {% if request.user.is_staff or request.user.super_user %}
+            <a href="{{ obj.get_edit_url }}" class="btn btn-default" role="button">Edit</a>
+            <a href="{{ obj.get_delete_url }}" class="btn btn-danger" role="button">delete</a>
+            {% endif %}
+        </p>
       </div>
     </div>
   </div>
-<hr/>
+
 </div>
+
+{#{% cycle "" "<div class='col-sm-12'> <hr></div> </div><div class='row'>"%}#}
 {% endfor %}
 
-
+<!--
 <div class="pagination">
     <span class="step-links">
-        {% if object_list.has_previous %}
-            <a href="?{{ page_request_var }}={{ object_list.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">previous</a>
+        {% if queryset.has_previous %}
+            <a href="?{{ page_request_var }}={{ queryset.previous_page_number}}
+&q= {{request.GET.q}}">
+                previous</a>
         {% endif %}
 
         <span class="current">
-            Page {{ object_list.number }} of {{ object_list.paginator.num_pages }}.
+            Page {{ queryset.number }} of {{ queryset.paginator.num_pages }}.
         </span>
 
-        {% if object_list.has_next %}
-            <a href="?{{ page_request_var }}={{ object_list.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">next</a>
+        {% if queryset.has_next %}
+            <a href="?{{ page_request_var }}={{ queryset.next_page_number }}
+&q={{request.GET.q}} ">next</a>
         {% endif %}
     </span>
 </div>
+-->
 
+<div class="pagination">
+    <span class="step-links">
+        {% if queryset.has_previous %}
 
+            <button id ="btn_post" type="submit" form="form1" name="page"
+                    value="{{ queryset.previous_page_number}}">Previous</button>
+        {% endif %}
 
+        <span class="current">
+            Page {{ queryset.number }} of {{ queryset.paginator.num_pages }}.
+        </span>
 
+        {% if queryset.has_next %}
+            <button id ="btn_post" type="submit" form="form1" name="page"
+                    value="{{ queryset.next_page_number }}">Next</button>
+
+        {% endif %}
+    </span>
 </div>
-
-{% endblock content %}
+</div>
+{% endblock %}

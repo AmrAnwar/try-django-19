@@ -1,3 +1,8 @@
 h1 {
-    color: #777777;
+    color:#003366;
+}
+#btn_post{
+/*padding: 0;*/
+/*border: none;*/
+background: none;
 }

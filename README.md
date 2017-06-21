@@ -83,5 +83,3 @@ The tutorial code below is the final code from the end of each tutorial video. E
 [37 - Search Posts](../../tree/2e140665355611a54725eb9804655de6ae6276e7)
 
 [Final Try Django 1.8 Code](../../tree/2e140665355611a54725eb9804655de6ae6276e7)
-
-
